@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Web;
 
 namespace Tabular
 {
@@ -32,7 +33,7 @@ namespace Tabular
 				_sw.Write("<tr>");
 				foreach (var cg in _structure.ColumnGroups)
 				{
-					_sw.Write("<th colspan=\"" + cg.Columns.Count() + "\">" + cg.Title + "</th>");
+					_sw.Write("<th colspan=\"" + cg.Columns.Count() + "\">" + HttpUtility.HtmlEncode(cg.Title) + "</th>");
 				}
 				_sw.Write("</tr>");
 			}
@@ -45,7 +46,7 @@ namespace Tabular
 
 				foreach (var c in allColumns)
 				{
-					_sw.Write("<th>" + c.Title + "</th>");
+					_sw.Write("<th>" + HttpUtility.HtmlEncode(c.Title) + "</th>");
 				}
 
 				_sw.Write("</tr>");
@@ -79,7 +80,7 @@ namespace Tabular
 
 		public void WriteCell(TableColumn column, string value)
 		{
-			_sw.WriteLine("<td style=\"" + BuildCellCss(column) + "\">" + value + "</td>");
+			_sw.WriteLine("<td style=\"" + BuildCellCss(column) + "\">" + HttpUtility.HtmlEncode(value) + "</td>");
 		}
 	}
 }
