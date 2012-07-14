@@ -7,7 +7,30 @@ namespace Tabular
 {
 	public class TableRenderer
 	{
-		public static void Render<T>(IEnumerable<T> data, ITableWriter tableWriter, params int[] columnWidths)
+		ITableWriter _target;
+		TableStructure _structure;
+		TableColumn _currentColumn;
+		bool _haveSentStartRow = false;
+
+
+		/// <summary>
+		/// Renders the supplied collection as a table to the supplied table writer.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="data">The collection of objects to be rendered; each item in the collection appears as a row in the rendered table.</param>
+		/// <param name="tableWriter">The table writer which will render the table.</param>
+		/// <param name="columnWidths">An array of integers specifying the width, in characters, of each column.</param>
+		public static void Render<T>(IEnumerable<T> data, ITableWriter tableWriter, int numberOfRowsToInspectWhenDeterminingColumnWidth = 10)
+		{
+			RenderInternal(data, tableWriter, numberOfRowsToInspectWhenDeterminingColumnWidth, new int[0]);
+		}
+
+		public static void RenderWithSpecifiedColumnWidths<T>(IEnumerable<T> data, ITableWriter tableWriter, params int[] columnWidths)
+		{
+			RenderInternal(data, tableWriter, 0, columnWidths);
+		}
+
+		private static void RenderInternal<T>(IEnumerable<T> data, ITableWriter tableWriter, int numberOfRowsToInspectWhenDeterminingColumnWidth, params int[] columnWidths)
 		{
 			// First, create structure
 			TableStructure ts = new TableStructure();
@@ -50,13 +73,23 @@ namespace Tabular
 
 				int propertyNumber = 0;
 
+				var previewObjects = data.Take(numberOfRowsToInspectWhenDeterminingColumnWidth).ToArray();
+
 				foreach (var property in properties)
 				{
-					int columnWidth = 30;
+					int columnWidth = -1;
 
+					// If the caller has nominated a column width, then use that
 					if (columnWidths.Length > propertyNumber)
 					{
 						columnWidth = columnWidths[propertyNumber];
+					}
+					else
+					{
+						// Otherwise, choose a column width based on the longest value found in the first 10 rows
+						int maxWidth = previewObjects.Max(x => property.GetValue(x, null).ToString().Length);
+
+						columnWidth = maxWidth;
 					}
 
 					var col = new TableColumn() { Name = property.Name, Title = property.Name, Width = columnWidth };
@@ -95,11 +128,6 @@ namespace Tabular
 
 			tableWriter.EndTable();
 		}
-
-		ITableWriter _target;
-		TableStructure _structure;
-		TableColumn _currentColumn;
-		bool _haveSentStartRow = false;
 
 		public TableRenderer(ITableWriter target)
 		{

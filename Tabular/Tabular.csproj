@@ -40,14 +40,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HorizontalAlignment.cs" />
+    <Compile Include="HtmlTableWriter.cs" />
     <Compile Include="ITableWriter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StringHelpers.cs" />
     <Compile Include="TableColumn.cs" />
     <Compile Include="TableColumnGroup.cs" />
     <Compile Include="TableRenderer.cs" />
     <Compile Include="TableRendererBase.cs" />
     <Compile Include="TableStructure.cs" />
     <Compile Include="TableStructureBuilder.cs" />
+    <Compile Include="TextTableRenderer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
