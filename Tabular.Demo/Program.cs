@@ -11,12 +11,12 @@ namespace Tabular.Demo
 	{
 		static void Main(string[] args)
 		{
-			RunDemo("Demo 1: Simple render to console",                     () => DemonstrateSimpleRenderToConsole());
-			RunDemo("Demo 2: Simultaneous render to console and html file", () => DemonstrateSimultaneousRenderToConsoleAndHtmlFile());
-			RunDemo("Demo 2: Simultaneous render to text and html files",   () => DemonstrateSimultaneousRenderToConsoleAndTextFile());
+			RunDemo("Demo 1: Simple render to console",                     () => Demo1_DemonstrateSimpleRenderToConsole());
+			RunDemo("Demo 2: Simultaneous render to console and html file", () => Demo2_DemonstrateSimultaneousRenderToConsoleAndHtmlFile());
+			RunDemo("Demo 3: Simultaneous render to text and html files",   () => Demo3_DemonstrateSimultaneousRenderToConsoleAndTextFile());
 		}
 
-		private static void DemonstrateSimpleRenderToConsole()
+		private static void Demo1_DemonstrateSimpleRenderToConsole()
 		{
 			// First, let's build a collection of objects to render.
 			var filesInCurrentDirectory =
@@ -32,7 +32,7 @@ namespace Tabular.Demo
 			TableRenderer.RenderToConsole(objectsToRender);
 		}
 		
-		private static void DemonstrateSimultaneousRenderToConsoleAndHtmlFile()
+		private static void Demo2_DemonstrateSimultaneousRenderToConsoleAndHtmlFile()
 		{
 			using (StreamWriter demo2Out = new StreamWriter("demo2Out.html"))
 			{
@@ -65,7 +65,7 @@ namespace Tabular.Demo
 			Process.Start("demo2Out.html");
 		}
 
-		private static void DemonstrateSimultaneousRenderToConsoleAndTextFile()
+		private static void Demo3_DemonstrateSimultaneousRenderToConsoleAndTextFile()
 		{
 			using (StreamWriter demo3HtmlOut = new StreamWriter("demo3Out.html"))
 			using (StreamWriter demo3TextOut = new StreamWriter("demo3Out.txt"))
