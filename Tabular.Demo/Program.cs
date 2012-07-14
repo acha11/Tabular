@@ -11,15 +11,37 @@ namespace Tabular.Demo
 	{
 		static void Main(string[] args)
 		{
-			using (StreamWriter demoOut = new StreamWriter("demoOut.html"))
+			RunDemo("Demo 1: Simple render to console",                     () => DemonstrateSimpleRenderToConsole());
+			RunDemo("Demo 2: Simultaneous render to console and html file", () => DemonstrateSimultaneousRenderToConsoleAndHtmlFile());
+		}
+
+		private static void DemonstrateSimpleRenderToConsole()
+		{
+			// First, let's build a collection of objects to render.
+			var filesInCurrentDirectory =
+				new DirectoryInfo(Directory.GetCurrentDirectory()).GetFiles();
+
+			// The anonymous type we're building has properties Name, Extension and CreationTime.
+			// The resulting table will have a column for each of those properties.
+			var objectsToRender =
+				filesInCurrentDirectory
+				.Select(x => new { x.Name, x.Extension, x.CreationTime });
+
+			// Now, we render the table to the console.
+			TableRenderer.RenderToConsole(objectsToRender);
+		}
+		
+		private static void DemonstrateSimultaneousRenderToConsoleAndHtmlFile()
+		{
+			using (StreamWriter demoOut = new StreamWriter("demo2Out.html"))
 			{
-				// First, build an IEnumerable of objects we want rendered into a table,
-				// one row per item in the sequence, one column per property of the
-				// objects.
+				// First, let's build a collection of objects to render.
 				var filesInCurrentDirectory =
 					new DirectoryInfo(Directory.GetCurrentDirectory()).GetFiles();
 
-				var objectsToRenderIntoTable = 
+				// The anonymous type we're building has properties Name, Extension and CreationTime.
+				// The resulting table will have a column for each of those properties.
+				var objectsToRender =
 					filesInCurrentDirectory
 					.Select(x => new { x.Name, x.Extension, x.CreationTime });
 
@@ -33,13 +55,24 @@ namespace Tabular.Demo
 				// Now, a single renderer which takes care of writing our single table to
 				// both of the above destinations.
 				var multipleTableRenderer = new MultipleTargetTableWriter(textTableRenderer, htmlTableRenderer);
-				
+
 				// Finally, we actually render the table
-				TableRenderer.Render(objectsToRenderIntoTable, multipleTableRenderer);
+				TableRenderer.Render(objectsToRender, multipleTableRenderer);
 			}
 
 			// And launch a browser to display the generated html
-			Process.Start("demoOut.html");
+			Process.Start("demo2Out.html");
+		}
+
+		private static void RunDemo(string title, Action demo)
+		{
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine(title);
+			Console.ForegroundColor = ConsoleColor.Gray;
+
+			demo();
+
+			Console.WriteLine();
 		}
 	}
 }
