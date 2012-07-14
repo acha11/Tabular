@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleTableWriter.cs" />
+    <Compile Include="CsvTableWriter.cs" />
     <Compile Include="CurrencyValue.cs" />
     <Compile Include="HorizontalAlignment.cs" />
     <Compile Include="HtmlTableWriter.cs" />
