@@ -65,7 +65,7 @@ namespace Tabular
 
 		public void EndRow()
 		{
-			_sw.WriteLine("<tr>");
+			_sw.WriteLine("</tr>");
 		}
 
 		private string BuildCellCss(TableColumn column)
