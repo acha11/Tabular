@@ -15,7 +15,7 @@ namespace Tabular
 
 		public static void RenderToConsole<T>(IEnumerable<T> data, int numberOfRowsToInspectWhenDeterminingColumnWidth = 10)
 		{
-			var tableWriter = new TextTableRenderer();
+			var tableWriter = new ConsoleTableWriter();
 
 			RenderInternal(data, tableWriter, numberOfRowsToInspectWhenDeterminingColumnWidth, new int[0]);
 		}

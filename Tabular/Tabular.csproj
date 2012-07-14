@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleTableWriter.cs" />
     <Compile Include="CurrencyValue.cs" />
     <Compile Include="HorizontalAlignment.cs" />
     <Compile Include="HtmlTableWriter.cs" />
@@ -52,7 +53,10 @@
     <Compile Include="TableRenderer.cs" />
     <Compile Include="TableStructure.cs" />
     <Compile Include="TableStructureBuilder.cs" />
-    <Compile Include="TextTableRenderer.cs" />
+    <Compile Include="TextTableWriter.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Tabular.cd" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

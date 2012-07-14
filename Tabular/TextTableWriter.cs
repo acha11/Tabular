@@ -2,12 +2,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Tabular
 {
-	public class TextTableRenderer : ITableWriter
+	public class TextTableWriter : ITableWriter
 	{
+		TextWriter _textWriter;
+
 		TableStructure _structure;
+
+		public TextTableWriter(TextWriter textWriter)
+		{
+			_textWriter = textWriter;
+		}
 
 		public void StartTable(TableStructure tableStructure)
 		{
@@ -22,89 +30,89 @@ namespace Tabular
 		{
 			foreach (var cg in _structure.ColumnGroups)
 			{
-				Console.Write("+");
+				_textWriter.Write("+");
 
 				foreach (var c in cg.Columns)
 				{
-					Console.Write("".PadLeft(c.Width + _cellHorizontalPadding * 2, '-'));
+					_textWriter.Write("".PadLeft(c.Width + _cellHorizontalPadding * 2, '-'));
 				}
 			}
 
-			Console.WriteLine("+");
+			_textWriter.WriteLine("+");
 		}
 
 		private void WriteHeader()
 		{
 			foreach (var cg in _structure.ColumnGroups)
 			{
-				Console.Write("+");
+				_textWriter.Write("+");
 
 				foreach (var c in cg.Columns)
 				{
-					Console.Write("".PadLeft(c.Width + _cellHorizontalPadding * 2, '-'));
+					_textWriter.Write("".PadLeft(c.Width + _cellHorizontalPadding * 2, '-'));
 				}
 			}
 
-			Console.WriteLine("+");
+			_textWriter.WriteLine("+");
 
 			if (_structure.ColumnGroups.Any(cg => cg.Title.Length > 0))
 			{
 
 				foreach (var cg in _structure.ColumnGroups)
 				{
-					Console.Write("|");
+					_textWriter.Write("|");
 
 					int cgWidth = cg.Columns.Sum(c => c.Width + _cellHorizontalPadding * 2);
 
-					Console.Write(cg.Title.Centre(cgWidth));
+					_textWriter.Write(cg.Title.Centre(cgWidth));
 				}
 
-				Console.WriteLine("|");
+				_textWriter.WriteLine("|");
 
 				foreach (var cg in _structure.ColumnGroups)
 				{
-					Console.Write("+");
+					_textWriter.Write("+");
 
 					foreach (var c in cg.Columns)
 					{
-						Console.Write("".PadLeft(c.Width + _cellHorizontalPadding * 2, '-'));
+						_textWriter.Write("".PadLeft(c.Width + _cellHorizontalPadding * 2, '-'));
 					}
 				}
 
-				Console.WriteLine("+");
+				_textWriter.WriteLine("+");
 			}
 
 			if (_structure.GetAllColumns().Any(c => c.Title.Length > 0))
 			{
 				foreach (var cg in _structure.ColumnGroups)
 				{
-					Console.Write("|");
+					_textWriter.Write("|");
 
 					foreach (var c in cg.Columns)
 					{
-						Console.Write(c.Title.Centre(c.Width + _cellHorizontalPadding * 2));
+						_textWriter.Write(c.Title.Centre(c.Width + _cellHorizontalPadding * 2));
 					}
 				}
 
-				Console.WriteLine("|");
+				_textWriter.WriteLine("|");
 
 				foreach (var cg in _structure.ColumnGroups)
 				{
-					Console.Write("+");
+					_textWriter.Write("+");
 
 					foreach (var c in cg.Columns)
 					{
-						Console.Write("".PadLeft(c.Width + _cellHorizontalPadding * 2, '-'));
+						_textWriter.Write("".PadLeft(c.Width + _cellHorizontalPadding * 2, '-'));
 					}
 				}
 
-				Console.WriteLine("+");
+				_textWriter.WriteLine("+");
 			}
 		}
 
 		public void StartRow()
 		{
-			Console.Write("|");
+			_textWriter.Write("|");
 		}
 
 		public void EndTable()
@@ -114,7 +122,7 @@ namespace Tabular
 
 		void ITableWriter.EndRow()
 		{
-			Console.WriteLine("|");
+			_textWriter.WriteLine("|");
 		}
 
 		public void WriteCell(TableColumn column, string value)
@@ -122,11 +130,11 @@ namespace Tabular
 			// If this is the first column in a group other than the first, then write a separator
 			if (_structure.ColumnGroups.Skip(1).Any(cg => cg.Columns[0] == column))
 			{
-				Console.Write("|");
+				_textWriter.Write("|");
 			}
 
 			// Pad left
-			Console.Write("".PadLeft(_cellHorizontalPadding));
+			_textWriter.Write("".PadLeft(_cellHorizontalPadding));
 
 			// Write no more than columnWidth characters
 
@@ -147,18 +155,18 @@ namespace Tabular
 			switch (column.HorizontalAlignment)
 			{
 				case HorizontalAlignment.Right:
-					Console.Write(toWrite.PadLeft(column.Width));
+					_textWriter.Write(toWrite.PadLeft(column.Width));
 					break;
 				case HorizontalAlignment.Left:
-					Console.Write(toWrite.PadRight(column.Width));
+					_textWriter.Write(toWrite.PadRight(column.Width));
 					break;
 				case HorizontalAlignment.Centre:
-					Console.Write(toWrite.Centre(column.Width));
+					_textWriter.Write(toWrite.Centre(column.Width));
 					break;
 			}
 
 			// Pad right
-			Console.Write("".PadLeft(_cellHorizontalPadding));
+			_textWriter.Write("".PadLeft(_cellHorizontalPadding));
 		}
 	}
 }
