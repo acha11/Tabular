@@ -7,14 +7,22 @@ using System.Web;
 
 namespace Tabular
 {
-	public class HtmlTableWriter : ITableWriter
+	public class HtmlTableWriter : ITableWriter, IDisposable
 	{
 		StreamWriter _sw;
 		TableStructure _structure;
+		bool _ownsStreamWriter;
 
 		public HtmlTableWriter(StreamWriter sw)
 		{
 			_sw = sw;
+			_ownsStreamWriter = false;
+		}
+
+		public HtmlTableWriter(string outputFile)
+		{
+			_ownsStreamWriter = true;
+			_sw = new StreamWriter(outputFile);
 		}
 
 		public void StartTable(TableStructure tableStructure)
@@ -56,6 +64,13 @@ namespace Tabular
 		public void EndTable()
 		{
 			_sw.WriteLine("</table>");
+
+			if (_ownsStreamWriter)
+			{
+				_sw.Close();
+
+				_sw.Dispose();
+			}
 		}
 
 		public void StartRow()
@@ -86,6 +101,17 @@ namespace Tabular
 		public bool UsesColumnWidth
 		{
 			get { return false; }
+		}
+
+		public void Dispose()
+		{
+			if (_ownsStreamWriter)
+			{
+				if (_sw != null)
+				{
+					_sw.Dispose();
+				}
+			}
 		}
 	}
 }

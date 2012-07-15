@@ -135,15 +135,12 @@ namespace Tabular.Demo
 					.Column("LastWriteTime")
 				.Finish();
 
-			using (StreamWriter demo5Out = new StreamWriter("demo5Out.html"))
-			{
-				ITableWriter tw = new MultipleTargetTableWriter(
-					new ConsoleTableWriter(),
-					new HtmlTableWriter(demo5Out));
+			ITableWriter tw = new MultipleTargetTableWriter(
+				new ConsoleTableWriter(),
+				new HtmlTableWriter("demo5Out.html"));
 
-				// Now, we render the table to the console.
-				TableRenderer.Render(objectsToRender, tw, tableStructure);
-			}
+			// Now, we render the table to the console.
+			TableRenderer.Render(objectsToRender, tw, tableStructure);
 
 			Process.Start("demo5out.html");
 		}

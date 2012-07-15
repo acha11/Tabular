@@ -6,15 +6,23 @@ using System.IO;
 
 namespace Tabular
 {
-	public class CsvTableWriter : ITableWriter
+	public class CsvTableWriter : ITableWriter, IDisposable
 	{
 		StreamWriter _sw;
 		TableStructure _structure;
 		TableColumn _firstColumn;
 
+		bool _ownsStreamWriter;
+
 		public CsvTableWriter(StreamWriter sw)
 		{
 			_sw = sw;
+		}
+
+		public CsvTableWriter(string outputFile)
+		{
+			_ownsStreamWriter = true;
+			_sw = new StreamWriter(outputFile);
 		}
 
 		public void StartTable(TableStructure tableStructure)
@@ -30,6 +38,12 @@ namespace Tabular
 
 		public void EndTable()
 		{
+			if (_ownsStreamWriter)
+			{
+				_sw.Close();
+
+				_sw.Dispose();
+			}
 		}
 
 		public void StartRow()
@@ -68,6 +82,17 @@ namespace Tabular
 		public bool UsesColumnWidth
 		{
 			get { return false; }
+		}
+
+		public void Dispose()
+		{
+			if (_ownsStreamWriter)
+			{
+				if (_sw != null)
+				{
+					_sw.Dispose();
+				}
+			}
 		}
 	}
 }
