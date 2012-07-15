@@ -82,5 +82,10 @@ namespace Tabular
 		{
 			_sw.WriteLine("<td style=\"" + BuildCellCss(column) + "\">" + HttpUtility.HtmlEncode(value) + "</td>");
 		}
+		
+		public bool UsesColumnWidth
+		{
+			get { return false; }
+		}
 	}
 }

@@ -43,5 +43,10 @@ namespace Tabular
 		{
 			foreach (var target in _targets) target.WriteCell(column, value);
 		}
+
+		public bool UsesColumnWidth
+		{
+			get { return _targets.Any(x => x.UsesColumnWidth); }
+		}
 	}
 }

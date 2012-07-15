@@ -7,11 +7,13 @@ namespace Tabular
 {
 	public class TableStructure
 	{
+		public int RowsToExamineWhenAutoSizingColumns { get; set; }
 		public List<TableColumnGroup> ColumnGroups { get; set; }
 
 		public TableStructure()
 		{
 			ColumnGroups = new List<TableColumnGroup>();
+			RowsToExamineWhenAutoSizingColumns = 10;
 		}
 
 		public IEnumerable<TableColumn> GetAllColumns()

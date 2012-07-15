@@ -64,5 +64,10 @@ namespace Tabular
 				return value;
 			}
 		}
+
+		public bool UsesColumnWidth
+		{
+			get { return false; }
+		}
 	}
 }

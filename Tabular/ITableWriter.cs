@@ -12,5 +12,7 @@ namespace Tabular
 		void StartRow();
 		void EndRow();
 		void WriteCell(TableColumn column, string value);
+
+		bool UsesColumnWidth { get; }
 	}
 }

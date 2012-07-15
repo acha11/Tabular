@@ -11,10 +11,11 @@ namespace Tabular.Demo
 	{
 		static void Main(string[] args)
 		{
-			RunDemo("Demo 1: Simple render to console",                     () => Demo1_DemonstrateSimpleRenderToConsole());
-			RunDemo("Demo 2: Simultaneous render to console and html file", () => Demo2_DemonstrateSimultaneousRenderToConsoleAndHtmlFile());
-			RunDemo("Demo 3: Render to text file",                          () => Demo3_DemonstrateRenderToTextFile());
-			RunDemo("Demo 4: Render to csv file",                           () => Demo4_DemonstrateRenderToCsvFile());
+			RunDemo("Demo 1: Simple render to console",                                     () => Demo1_DemonstrateSimpleRenderToConsole());
+			RunDemo("Demo 2: Simultaneous render to html and console (basic ASCII only)",   () => Demo2_DemonstrateSimultaneousRenderToConsoleAndHtmlFile());
+			RunDemo("Demo 3: Render to text file",                                          () => Demo3_DemonstrateRenderToTextFile());
+			RunDemo("Demo 4: Render to csv file",                                           () => Demo4_DemonstrateRenderToCsvFile());
+			RunDemo("Demo 5: Column groups",                                                () => Demo5_DemonstrateColumnGroups());
 		}
 
 		private static void Demo1_DemonstrateSimpleRenderToConsole()
@@ -50,6 +51,8 @@ namespace Tabular.Demo
 				// Next, set up some table renderers. First, a writer that will write the
 				// table to the console.
 				var consoleTableWriter = new ConsoleTableWriter();
+
+				consoleTableWriter.SetBorderCharacterSet(TextTableWriter.BasicAsciiBorderCharacterSet);
 
 				// Now, a writer that will write HTML to an output file.
 				var htmlTableWriter = new HtmlTableWriter(demo2Out);
@@ -108,6 +111,41 @@ namespace Tabular.Demo
 
 			// And display the generated file
 			Process.Start("demo4Out.csv");
+		}
+
+		private static void Demo5_DemonstrateColumnGroups()
+		{
+			// First, let's build a collection of objects to render.
+			var filesInCurrentDirectory =
+				new DirectoryInfo(Directory.GetCurrentDirectory()).GetFiles();
+
+			// The anonymous type we're building has properties Name, Extension, CreationTime and LastWriteTime.
+			// The resulting table will have a column for each of those properties.
+			var objectsToRender =
+				filesInCurrentDirectory
+				.Select(x => new { x.Name, x.Extension, x.CreationTime, x.LastWriteTime } );
+
+			// Define the structure of the table - two groups of columns, each containing two columns.
+			var tableStructure = TableStructure.Build()
+				.ColumnGroup("Core")
+					.Column("Name")
+					.Column("Extension")
+				.ColumnGroup("Time")
+					.Column("CreationTime")
+					.Column("LastWriteTime")
+				.Finish();
+
+			using (StreamWriter demo5Out = new StreamWriter("demo5Out.html"))
+			{
+				ITableWriter tw = new MultipleTargetTableWriter(
+					new ConsoleTableWriter(),
+					new HtmlTableWriter(demo5Out));
+
+				// Now, we render the table to the console.
+				TableRenderer.Render(objectsToRender, tw, tableStructure);
+			}
+
+			Process.Start("demo5out.html");
 		}
 
 		private static void RunDemo(string title, Action demo)
