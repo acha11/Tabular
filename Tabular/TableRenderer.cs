@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Reflection;
 
 namespace Tabular
 {
@@ -66,6 +67,8 @@ namespace Tabular
 		/// <param name="tableWriter">The table writer which will render the table.</param>
 		public static void Render<T>(IEnumerable<T> data, ITableWriter tableWriter, TableStructure tableStructure)
 		{
+			ApplyDefaultFormattingToAllColumns(GetEnumeratedType(data), tableStructure);
+
 			RenderCollectionOfComplexes(data, tableWriter, tableStructure);
 		}
 
@@ -79,9 +82,20 @@ namespace Tabular
 			return typeOfT;
 		}
 
-		private static void RenderCollectionOfComplexes<T>(IEnumerable<T> data, ITableWriter tableWriter, int numberOfRowsToInspectWhenDeterminingColumnWidth, Type typeOfT)
+		private static Type[] TypesWhichAreRightAlignedByDefault = new Type[]
 		{
-			// First, create structure
+			typeof(CurrencyValue),
+			typeof(int),
+			typeof(long),
+			typeof(float),
+			typeof(double),
+			typeof(decimal)
+		};
+
+		private static TableStructure BuildTableStructureBasedOnEnumerable<T>(IEnumerable<T> data, ITableWriter tableWriter, int numberOfRowsToInspectWhenDeterminingColumnWidth)
+		{
+			var typeOfT = GetEnumeratedType(data);
+
 			TableStructure ts = new TableStructure();
 
 			ts.RowsToExamineWhenAutoSizingColumns = numberOfRowsToInspectWhenDeterminingColumnWidth;
@@ -97,15 +111,55 @@ namespace Tabular
 			{
 				var col = new TableColumn() { Name = property.Name, Title = property.Name, Width = -1 };
 
-				if (property.PropertyType == typeof(CurrencyValue))
-				{
-					col.HorizontalAlignment = HorizontalAlignment.Right;
-				}
+				ApplyDefaultFormattingToColumn(property, col);
 
 				tcg.Columns.Add(col);
 
 				propertyNumber++;
 			}
+
+			if (tableWriter.UsesColumnWidth)
+			{
+				AutosizeColumns(data, ts);
+			}
+
+			return ts;
+		}
+
+		private static void ApplyDefaultFormattingToColumn(PropertyInfo property, TableColumn col)
+		{
+			if (col.HorizontalAlignment == HorizontalAlignment.Left)
+			{
+				if (TypesWhichAreRightAlignedByDefault.Contains(property.PropertyType))
+				{
+					col.HorizontalAlignment = HorizontalAlignment.Right;
+				}
+			}
+
+			if (col.FormatSpecifier == null)
+			{
+				if (property.PropertyType == typeof(long) || property.PropertyType == typeof(int))
+				{
+					col.FormatSpecifier = "n0"; // Numeric, with 0 decimal places
+				}
+			}
+		}
+
+		private static void ApplyDefaultFormattingToAllColumns(Type typeOfT, TableStructure tableStructure)
+		{
+			var properties = typeOfT.GetProperties();
+
+			foreach (var property in properties)
+			{
+				var col = tableStructure.GetAllColumns().Single(x => x.Name == property.Name);
+
+				ApplyDefaultFormattingToColumn(property, col);
+			}
+		}
+
+		private static void RenderCollectionOfComplexes<T>(IEnumerable<T> data, ITableWriter tableWriter, int numberOfRowsToInspectWhenDeterminingColumnWidth, Type typeOfT)
+		{
+			var ts = BuildTableStructureBasedOnEnumerable(data, tableWriter, numberOfRowsToInspectWhenDeterminingColumnWidth);
 
 			RenderCollectionOfComplexes(data, tableWriter, ts);
 		}
@@ -123,7 +177,7 @@ namespace Tabular
 				var property = properties.Single(x => x.Name == tc.Name);
 
 				// Choose a column width based on the longest value found in the first n rows
-				int maxWidth = previewObjects.Max(x => property.GetValue(x, null).ToString().Length);
+				int maxWidth = previewObjects.Max(x => TableWriterHelper.RenderValue(tc, property.GetValue(x, null)).Length);
 
 				maxWidth = Math.Max(maxWidth, tc.Title.Length);
 
@@ -158,10 +212,7 @@ namespace Tabular
 				{
 					var property = properties.Single(x => x.Name == tc.Name);
 
-					object value = property.GetValue(item, null);
-					string toRender = value == null ? "null" : value.ToString();
-
-					tableWriter.WriteCell(tc, toRender);
+					tableWriter.WriteCell(tc, property.GetValue(item, null));
 				}
 
 				tableWriter.EndRow();

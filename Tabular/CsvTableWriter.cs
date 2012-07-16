@@ -55,7 +55,7 @@ namespace Tabular
 			_sw.WriteLine();
 		}
 
-		public void WriteCell(TableColumn column, string value)
+		public void WriteCell(TableColumn column, object value)
 		{
 			if (column != _firstColumn)
 			{

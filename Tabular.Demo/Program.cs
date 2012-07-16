@@ -110,7 +110,7 @@ namespace Tabular.Demo
 			}
 
 			// And display the generated file
-			Process.Start("demo4Out.csv");
+			//Process.Start("demo4Out.csv");
 		}
 
 		private static void Demo5_DemonstrateColumnGroups()
@@ -119,17 +119,17 @@ namespace Tabular.Demo
 			var filesInCurrentDirectory =
 				new DirectoryInfo(Directory.GetCurrentDirectory()).GetFiles();
 
-			// The anonymous type we're building has properties Name, Extension, CreationTime and LastWriteTime.
+			// The anonymous type we're building has properties Name, Length, CreationTime and LastWriteTime.
 			// The resulting table will have a column for each of those properties.
 			var objectsToRender =
 				filesInCurrentDirectory
-				.Select(x => new { x.Name, x.Extension, x.CreationTime, x.LastWriteTime } );
+				.Select(x => new { x.Name, x.Length, x.CreationTime, x.LastWriteTime } );
 
 			// Define the structure of the table - two groups of columns, each containing two columns.
 			var tableStructure = TableStructure.Build()
 				.ColumnGroup("Core")
 					.Column("Name")
-					.Column("Extension")
+					.Column("Length")
 				.ColumnGroup("Time")
 					.Column("CreationTime")
 					.Column("LastWriteTime")

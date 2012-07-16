@@ -39,7 +39,7 @@ namespace Tabular
 			foreach (var target in _targets) target.EndRow();
 		}
 
-		public void WriteCell(TableColumn column, string value)
+		public void WriteCell(TableColumn column, object value)
 		{
 			foreach (var target in _targets) target.WriteCell(column, value);
 		}

@@ -208,8 +208,10 @@ namespace Tabular
 			_textWriter.WriteLine(_borderCharacterSet.Vertical);
 		}
 
-		public void WriteCell(TableColumn column, string value)
+		public void WriteCell(TableColumn column, object value)
 		{
+			string renderedString = TableWriterHelper.RenderValue(column, value);
+
 			// If this is the first column in a group other than the first, then write a separator
 			if (_structure.ColumnGroups.Skip(1).Any(cg => cg.Columns[0] == column))
 			{
@@ -220,8 +222,7 @@ namespace Tabular
 			_textWriter.Write("".PadLeft(_cellHorizontalPadding));
 
 			// Write no more than columnWidth characters
-
-			string toWrite = value;
+			string toWrite = renderedString;
 
 			if (toWrite.Length > column.Width)
 			{

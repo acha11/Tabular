@@ -9,78 +9,90 @@ namespace Tabular
 {
 	public class HtmlTableWriter : ITableWriter, IDisposable
 	{
-		StreamWriter _sw;
+		TextWriter _tw;
 		TableStructure _structure;
 		bool _ownsStreamWriter;
 
-		public HtmlTableWriter(StreamWriter sw)
+		public HtmlTableWriter(TextWriter tw)
 		{
-			_sw = sw;
+			_tw = tw;
 			_ownsStreamWriter = false;
+			GenerateRandomHtmlTableElementId();
 		}
 
 		public HtmlTableWriter(string outputFile)
 		{
 			_ownsStreamWriter = true;
-			_sw = new StreamWriter(outputFile);
+			_tw = new StreamWriter(outputFile);
+			GenerateRandomHtmlTableElementId();
 		}
+
+		private void GenerateRandomHtmlTableElementId()
+		{
+			HtmlTableElementId = "table" + Guid.NewGuid().ToString().Replace('-', '_');
+		}
+
+		/// <summary>
+		/// This is randomly generated when the HtmlTableWriter is constructed. However, it can be over-ridden before calling StartTable.
+		/// </summary>
+		public string HtmlTableElementId { get; set; }
 
 		public void StartTable(TableStructure tableStructure)
 		{
 			_structure = tableStructure;
 
-			string id = "table" + Guid.NewGuid().ToString().Replace('-', '_');
+			string id = HtmlTableElementId;
 
-			_sw.WriteLine(
+			_tw.WriteLine(
 				"<style>#" + id + ", #" + id + " th, #" + id + " td { border: solid rgb(200, 200, 200) 1px; border-collapse: collapse; border-spacing: 0px; padding: 3px; }" +
 					" #" + id + " th { background-color: rgb(230, 230, 255); } #" + id + " { font-family: tahoma; }</style>");
-			_sw.WriteLine("<table id=\"" + id + "\">");
+			_tw.WriteLine("<table id=\"" + id + "\">");
 
 			if (_structure.ColumnGroups.Any(cg => cg.Title.Length > 0))
 			{
-				_sw.Write("<tr>");
+				_tw.Write("<tr>");
 				foreach (var cg in _structure.ColumnGroups)
 				{
-					_sw.Write("<th colspan=\"" + cg.Columns.Count() + "\">" + HttpUtility.HtmlEncode(cg.Title) + "</th>");
+					_tw.Write("<th colspan=\"" + cg.Columns.Count() + "\">" + HttpUtility.HtmlEncode(cg.Title) + "</th>");
 				}
-				_sw.Write("</tr>");
+				_tw.Write("</tr>");
 			}
 
 			var allColumns = _structure.GetAllColumns();
 
 			if (allColumns.Any(c => c.Title.Length > 0))
 			{
-				_sw.Write("<tr>");
+				_tw.Write("<tr>");
 
 				foreach (var c in allColumns)
 				{
-					_sw.Write("<th>" + HttpUtility.HtmlEncode(c.Title) + "</th>");
+					_tw.Write("<th>" + HttpUtility.HtmlEncode(c.Title) + "</th>");
 				}
 
-				_sw.Write("</tr>");
+				_tw.Write("</tr>");
 			}
 		}
 
 		public void EndTable()
 		{
-			_sw.WriteLine("</table>");
+			_tw.WriteLine("</table>");
 
 			if (_ownsStreamWriter)
 			{
-				_sw.Close();
+				_tw.Close();
 
-				_sw.Dispose();
+				_tw.Dispose();
 			}
 		}
 
 		public void StartRow()
 		{
-			_sw.WriteLine("<tr>");
+			_tw.WriteLine("<tr>");
 		}
 
 		public void EndRow()
 		{
-			_sw.WriteLine("</tr>");
+			_tw.WriteLine("</tr>");
 		}
 
 		private string BuildCellCss(TableColumn column)
@@ -93,9 +105,11 @@ namespace Tabular
 			return "";
 		}
 
-		public void WriteCell(TableColumn column, string value)
+		public void WriteCell(TableColumn column, object value)
 		{
-			_sw.WriteLine("<td style=\"" + BuildCellCss(column) + "\">" + HttpUtility.HtmlEncode(value) + "</td>");
+			string renderedString = TableWriterHelper.RenderValue(column, value);
+
+			_tw.WriteLine("<td style=\"" + BuildCellCss(column) + "\">" + HttpUtility.HtmlEncode(renderedString) + "</td>");
 		}
 		
 		public bool UsesColumnWidth
@@ -107,9 +121,9 @@ namespace Tabular
 		{
 			if (_ownsStreamWriter)
 			{
-				if (_sw != null)
+				if (_tw != null)
 				{
-					_sw.Dispose();
+					_tw.Dispose();
 				}
 			}
 		}

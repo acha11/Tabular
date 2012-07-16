@@ -27,7 +27,7 @@ namespace Tabular
 			return this;
 		}
 
-		public TableStructureBuilder Column(string name, string title, int width = -1, string formatSpecifier = "", HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left)
+		public TableStructureBuilder Column(string name, string title, int width = -1, string formatSpecifier = null, HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left)
 		{
 			if (_currentGroup == null)
 			{
@@ -39,7 +39,7 @@ namespace Tabular
 			return this;
 		}
 
-		public TableStructureBuilder Column(string name, int width = -1, string formatSpecifier = "", HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left)
+		public TableStructureBuilder Column(string name, int width = -1, string formatSpecifier = null, HorizontalAlignment horizontalAlignment = HorizontalAlignment.Left)
 		{
 			return Column(name, name, width, formatSpecifier, horizontalAlignment);
 		}
