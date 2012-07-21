@@ -14,21 +14,6 @@ namespace Tabular
 		TableColumn _currentColumn;
 		bool _haveSentStartRow = false;
 
-		public class ValueGroup<T>
-		{
-			private string _groupName;
-			private T _value;
-
-			public ValueGroup(string groupName, T value)
-			{
-				_groupName = groupName;
-				_value = value;
-			}
-
-			public string GroupName { get { return _groupName; } }
-			public T Value { get { return _value; } }
-		}
-
 		public static void RenderToConsole<T>(IEnumerable<T> data, int numberOfRowsToInspectWhenDeterminingColumnWidth = 10)
 		{
 			Render(data, new ConsoleTableWriter(), numberOfRowsToInspectWhenDeterminingColumnWidth);
