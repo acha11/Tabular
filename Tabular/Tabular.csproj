@@ -45,6 +45,15 @@
     <Compile Include="CurrencyValue.cs" />
     <Compile Include="HorizontalAlignment.cs" />
     <Compile Include="HtmlTableWriter.cs" />
+    <Content Include="js\FixedHeader.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.dataTables.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="js\jquery.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Compile Include="ITableWriter.cs" />
     <Compile Include="MultipleTargetTableRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

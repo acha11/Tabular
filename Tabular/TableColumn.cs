@@ -5,6 +5,13 @@ using System.Text;
 
 namespace Tabular
 {
+	public enum ValueSortMethod
+	{
+		Default,
+		Int,
+		DateTime
+	}
+
 	public class TableColumn
 	{
 		public string Name;
@@ -12,5 +19,6 @@ namespace Tabular
 		public int Width;
 		public string FormatSpecifier;
 		public HorizontalAlignment HorizontalAlignment;
+		public ValueSortMethod SortMethod;
 	}
 }

@@ -128,6 +128,19 @@ namespace Tabular
 					col.FormatSpecifier = "n0"; // Numeric, with 0 decimal places
 				}
 			}
+
+			if (col.SortMethod == ValueSortMethod.Default)
+			{
+				if (property.PropertyType == typeof(long) || property.PropertyType == typeof(int))
+				{
+					col.SortMethod = ValueSortMethod.Int;
+				}
+
+				if (property.PropertyType == typeof(DateTime))
+				{
+					col.SortMethod = ValueSortMethod.DateTime;
+				}
+			}
 		}
 
 		private static void ApplyDefaultFormattingToAllColumns(Type typeOfT, TableStructure tableStructure)
