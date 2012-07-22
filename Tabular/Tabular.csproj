@@ -33,7 +33,9 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -43,17 +45,15 @@
     <Compile Include="ConsoleTableWriter.cs" />
     <Compile Include="CsvTableWriter.cs" />
     <Compile Include="CurrencyValue.cs" />
+    <Compile Include="GridForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="GridForm.Designer.cs">
+      <DependentUpon>GridForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GridTableWriter.cs" />
     <Compile Include="HorizontalAlignment.cs" />
     <Compile Include="HtmlTableWriter.cs" />
-    <Content Include="js\FixedHeader.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="js\jquery.dataTables.min.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="js\jquery.js">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Compile Include="ITableWriter.cs" />
     <Compile Include="MultipleTargetTableRenderer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -68,6 +68,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Tabular.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="GridForm.resx">
+      <DependentUpon>GridForm.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

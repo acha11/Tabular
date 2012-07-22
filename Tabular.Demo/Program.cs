@@ -11,11 +11,12 @@ namespace Tabular.Demo
 	{
 		static void Main(string[] args)
 		{
-			RunDemo("Demo 1: Simple render to console",                                     () => Demo1_DemonstrateSimpleRenderToConsole());
-			RunDemo("Demo 2: Simultaneous render to html and console (basic ASCII only)",   () => Demo2_DemonstrateSimultaneousRenderToConsoleAndHtmlFile());
-			RunDemo("Demo 3: Render to text file",                                          () => Demo3_DemonstrateRenderToTextFile());
-			RunDemo("Demo 4: Render to csv file",                                           () => Demo4_DemonstrateRenderToCsvFile());
-			RunDemo("Demo 5: Column groups",                                                () => Demo5_DemonstrateColumnGroups());
+			RunDemo("Demo 1: Simple render to console", () => Demo1_DemonstrateSimpleRenderToConsole());
+			RunDemo("Demo 2: Simultaneous render to html and console (basic ASCII only)", () => Demo2_DemonstrateSimultaneousRenderToConsoleAndHtmlFile());
+			RunDemo("Demo 3: Render to text file", () => Demo3_DemonstrateRenderToTextFile());
+			RunDemo("Demo 4: Render to csv file", () => Demo4_DemonstrateRenderToCsvFile());
+			RunDemo("Demo 5: Column groups", () => Demo5_DemonstrateColumnGroups());
+			RunDemo("Demo 6: Grids", () => Demo6_Grids());
 		}
 
 		private static void Demo1_DemonstrateSimpleRenderToConsole()
@@ -143,6 +144,36 @@ namespace Tabular.Demo
 			TableRenderer.Render(objectsToRender, tw, tableStructure);
 
 			Process.Start("demo5out.html");
+		}
+
+		private static void Demo6_Grids()
+		{
+			// First, let's build a collection of objects to render.
+			var filesInCurrentDirectory =
+				new DirectoryInfo(Directory.GetCurrentDirectory()).GetFiles();
+
+			// The anonymous type we're building has properties Name, Length, CreationTime and LastWriteTime.
+			// The resulting table will have a column for each of those properties.
+			var objectsToRender =
+				filesInCurrentDirectory
+				.Select(x => new { x.Name, x.Length, x.CreationTime, x.LastWriteTime });
+
+			// Define the structure of the table - four columns.
+			var tableStructure = TableStructure.Build()
+				.Column("Name")
+				.Column("Length")
+				.Column("CreationTime")
+				.Column("LastWriteTime")
+				.Finish();
+
+			ITableWriter tw = new MultipleTargetTableWriter(
+				new ConsoleTableWriter(),
+				new GridTableWriter());
+
+			// Now, we render the table
+			int threshold = 4096;
+			TableRenderer.Render(objectsToRender.Where(x => x.Length > threshold), tw, tableStructure);
+			TableRenderer.Render(objectsToRender.Where(x => x.Length <= threshold), tw, tableStructure);
 		}
 
 		private static void RunDemo(string title, Action demo)
