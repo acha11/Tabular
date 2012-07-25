@@ -78,15 +78,17 @@ namespace Tabular
 
 					tabControl.TabPages.Add(newPage);
 
-					DataGridView newDataGridView = new DataGridView();
+				    DataGridView newDataGridView = new DataGridView
+				                                       {
+				                                           AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells,
+				                                           AllowUserToAddRows = false,
+				                                           AllowUserToDeleteRows = false,
+				                                           ReadOnly = true,
+				                                           RowHeadersVisible = false
+				                                       };
 
-					newDataGridView.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.DisplayedCells;
-					newDataGridView.AllowUserToAddRows = false;
-					newDataGridView.AllowUserToDeleteRows = false;
-					newDataGridView.ReadOnly = true;
-					newDataGridView.RowHeadersVisible = false;
 
-					newPage.Controls.Add(newDataGridView);
+				    newPage.Controls.Add(newDataGridView);
 
 					newDataGridView.Dock = DockStyle.Fill;
 

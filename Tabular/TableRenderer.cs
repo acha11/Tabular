@@ -34,7 +34,7 @@ namespace Tabular
 		{
 			var typeOfT = GetEnumeratedType<T>(data);
 
-			if (typeOfT.IsPrimitive)
+            if (typeOfT.IsPrimitive || typeOfT == typeof(string))
 			{
 				RenderCollectionOfPrimitives<T>(data, tableWriter);
 			}
