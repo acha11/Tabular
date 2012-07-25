@@ -67,7 +67,7 @@ namespace Tabular
 			return typeOfT;
 		}
 
-		private static Type[] TypesWhichAreRightAlignedByDefault = new Type[]
+		private static Type[] TypesWhichAreRightAlignedByDefault = new[]
 		{
 			typeof(CurrencyValue),
 			typeof(int),
@@ -81,26 +81,20 @@ namespace Tabular
 		{
 			var typeOfT = GetEnumeratedType(data);
 
-			TableStructure ts = new TableStructure();
+		    var ts = new TableStructure { RowsToExamineWhenAutoSizingColumns = numberOfRowsToInspectWhenDeterminingColumnWidth };
 
-			ts.RowsToExamineWhenAutoSizingColumns = numberOfRowsToInspectWhenDeterminingColumnWidth;
-
-			TableColumnGroup tcg = new TableColumnGroup("");
+		    TableColumnGroup tcg = new TableColumnGroup("");
 			ts.ColumnGroups.Add(tcg);
 
 			var properties = typeOfT.GetProperties();
 
-			int propertyNumber = 0;
-
-			foreach (var property in properties)
+		    foreach (var property in properties)
 			{
 				var col = new TableColumn() { Name = property.Name, Title = property.Name, Width = -1 };
 
 				ApplyDefaultFormattingToColumn(property, col);
 
 				tcg.Columns.Add(col);
-
-				propertyNumber++;
 			}
 
 			if (tableWriter.UsesColumnWidth)
@@ -199,8 +193,6 @@ namespace Tabular
 			}
 
 			tableWriter.StartTable(ts);
-
-			var allColumns = ts.GetAllColumns().ToArray();
 
 			foreach (var item in data)
 			{

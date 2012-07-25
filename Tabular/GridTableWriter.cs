@@ -20,14 +20,13 @@ namespace Tabular
 			ManualResetEvent gridFormIsReadyEvent = new ManualResetEvent(false);
 
 			Thread t = new Thread(
-				new ThreadStart(() =>
-				{
-					_gridForm = new GridForm(gridFormIsReadyEvent);				
+				() =>
+				    {
+				        _gridForm = new GridForm(gridFormIsReadyEvent);				
 
-					// TODO: When running from within a WinForms app (WPF?), this call's likely to cause issues. Detect and take evasive action.
-					Application.Run(_gridForm);
-				}
-			));
+				        // TODO: When running from within a WinForms app (WPF?), this call's likely to cause issues. Detect and take evasive action.
+				        Application.Run(_gridForm);
+				    });
 
 			t.SetApartmentState(ApartmentState.STA);
 
